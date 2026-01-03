@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 이미지 프롬프트 아키텍트 - AI 이미지 생성 프롬프트 설계 도구</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+/**
+ * 이미지 프롬프트 아키텍트 - 스타일시트
+ * 현대적이고 반응형인 디자인
+ */
+
+/* ===== 전역 설정 ===== */
+:root {
+    /* 색상 팔레트 */
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --secondary-color: #8b5cf6;
+    --accent-color: #ec4899;
+    
+    --background: #0f172a;
+    --surface: #1e293b;
+    --surface-light: #334155;
+    --surface-lighter: #475569;
+    
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    
+    /* 그라데이션 */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    
+    /* 간격 */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* 그림자 */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+    
+    /* 애니메이션 */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* ===== 기본 리셋 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ===== 컨테이너 ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* ===== 헤더 ===== */
+.header {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+    background: var(--gradient-primary);
+    border-radius: 20px;
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.header-content {
+    padding: var(--spacing-md);
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.main-title i {
+    font-size: 2.2rem;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+/* ===== 메인 콘텐츠 ===== */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+/* ===== 섹션 공통 스타일 ===== */
+.section-header {
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-header h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.section-header h2 i {
+    color: var(--primary-color);
+}
+
+.helper-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* ===== 입력 섹션 ===== */
+.input-section {
+    background: var(--surface);
+    padding: var(--spacing-lg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+}
+
+.input-wrapper {
+    margin-bottom: var(--spacing-lg);
+}
+
+.user-input {
+    width: 100%;
+    min-height: 180px;
+    padding: var(--spacing-md);
+    background: var(--surface-light);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: all var(--transition-base);
+}
+
+.user-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.user-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===== 고급 옵션 ===== */
+.advanced-options {
+    margin-top: var(--spacing-md);
+}
+
+.options-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--surface-light);
+    border: 1px solid var(--surface-lighter);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    width: 100%;
+    font-size: 0.95rem;
+}
+
+.options-toggle:hover {
+    background: var(--surface-lighter);
+    color: var(--text-primary);
+}
+
+.options-toggle.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.toggle-icon {
+    margin-left: auto;
+    transition: transform var(--transition-base);
+}
+
+.options-toggle.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.options-panel {
+    display: none;
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--surface-lighter);
+    animation: slideDown var(--transition-base);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.option-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.option-group:last-child {
+    margin-bottom: 0;
+}
+
+.option-group label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-secondary);
+}
+
+.option-group label i {
+    color: var(--primary-light);
+}
+
+.option-select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background: var(--surface-light);
+    border: 1px solid var(--surface-lighter);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.option-select:hover {
+    border-color: var(--primary-color);
+}
+
+.option-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ===== 버튼 ===== */
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+    justify-content: center;
+    min-width: 180px;
+}
+
+.btn i {
+    font-size: 1.1rem;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: var(--surface-light);
+    color: var(--text-primary);
+    border: 1px solid var(--surface-lighter);
+}
+
+.btn-secondary:hover {
+    background: var(--surface-lighter);
+    border-color: var(--primary-color);
+}
+
+/* ===== 로딩 섹션 ===== */
+.loading-section {
+    background: var(--surface);
+    padding: var(--spacing-xl);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+}
+
+.loading-animation {
+    text-align: center;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto var(--spacing-md);
+    border: 4px solid var(--surface-lighter);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-animation p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* ===== 출력 섹션 ===== */
+.output-section {
+    animation: fadeIn var(--transition-slow);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== 프롬프트 카드 ===== */
+.prompt-card {
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+    border: 1px solid var(--surface-lighter);
+}
+
+.prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--surface-light);
+    border-bottom: 1px solid var(--surface-lighter);
+}
+
+.prompt-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.btn-copy {
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.btn-copy:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-copy.copied {
+    background: var(--success);
+    animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.prompt-content {
+    padding: var(--spacing-lg);
+}
+
+.prompt-text {
+    background: var(--background);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 1px solid var(--surface-lighter);
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* ===== 설명 카드 ===== */
+.explanation-card {
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+    border: 1px solid var(--surface-lighter);
+}
+
+.explanation-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--gradient-accent);
+    border-bottom: 1px solid var(--surface-lighter);
+}
+
+.explanation-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: white;
+}
+
+.explanation-content {
+    padding: var(--spacing-lg);
+}
+
+.explanation-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.explanation-section:last-child {
+    margin-bottom: 0;
+}
+
+.explanation-section h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary-light);
+}
+
+.explanation-section p {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.explanation-section ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.explanation-section li {
+    padding: var(--spacing-xs) 0;
+    padding-left: var(--spacing-lg);
+    position: relative;
+    color: var(--text-secondary);
+}
+
+.explanation-section li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.explanation-section .tip {
+    background: rgba(99, 102, 241, 0.1);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    margin-top: var(--spacing-md);
+}
+
+/* ===== 팁 섹션 ===== */
+.tips-section {
+    background: var(--surface);
+    padding: var(--spacing-lg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    margin-top: var(--spacing-xl);
+}
+
+.tips-section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.tip-card {
+    background: var(--surface-light);
+    padding: var(--spacing-md);
+    border-radius: 12px;
+    border: 1px solid var(--surface-lighter);
+    transition: all var(--transition-base);
+}
+
+.tip-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+
+.tip-card i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+    display: block;
+}
+
+.tip-card h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.tip-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* ===== 푸터 ===== */
+.footer {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+    margin-top: var(--spacing-xl);
+    color: var(--text-muted);
+}
+
+.footer p {
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer i {
+    color: var(--accent-color);
+}
+
+.footer-note {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* ===== 토스트 알림 ===== */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--surface);
+    color: var(--text-primary);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all var(--transition-base);
+    z-index: 1000;
+    border: 1px solid var(--success);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.error {
+    border-color: var(--error);
+}
+
+.toast i {
+    color: var(--success);
+    font-size: 1.3rem;
+}
+
+.toast.error i {
+    color: var(--error);
+}
+
+/* ===== 반응형 디자인 ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .main-title {
+        font-size: 1.8rem;
+    }
+    
+    .main-title i {
+        font-size: 1.6rem;
+    }
+    
+    .subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .toast {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+    }
+    
+    .prompt-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .btn-copy {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        border-radius: 12px;
+    }
+    
+    .main-title {
+        font-size: 1.5rem;
+        flex-direction: column;
+    }
+    
+    .user-input {
+        min-height: 150px;
+        font-size: 0.95rem;
+    }
+}
+
+/* ===== 스크롤바 스타일링 ===== */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--surface-lighter);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* ===== 선택 영역 스타일 ===== */
+::selection {
+    background: var(--primary-color);
+    color: white;
+}
+
+::-moz-selection {
+    background: var(--primary-color);
+    color: white;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="main-title">
+                    <i class="fas fa-palette"></i>
+                    이미지 프롬프트 아키텍트
+                </h1>
+                <p class="subtitle">단순한 아이디어를 세계 최고 수준의 AI 이미지 생성 프롬프트로 변환합니다</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-lightbulb"></i> 당신의 아이디어를 입력하세요</h2>
+                    <p class="helper-text">예: "미래 도시의 일몰", "우주를 배경으로 한 고양이", "판타지 숲의 마법사"</p>
+                </div>
+                
+                <div class="input-wrapper">
+                    <textarea 
+                        id="userInput" 
+                        class="user-input" 
+                        placeholder="생성하고 싶은 이미지를 간단히 설명해주세요...&#10;&#10;예시:&#10;• 사이버펑크 스타일의 네온 도시&#10;• 수채화 느낌의 산 풍경&#10;• 미래형 자동차 디자인"
+                        rows="6"
+                    ></textarea>
+                    
+                    <div class="advanced-options">
+                        <button class="options-toggle" id="optionsToggle">
+                            <i class="fas fa-cog"></i> 고급 옵션
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </button>
+                        
+                        <div class="options-panel" id="optionsPanel">
+                            <div class="option-group">
+                                <label for="styleSelect">
+                                    <i class="fas fa-brush"></i> 선호 스타일
+                                </label>
+                                <select id="styleSelect" class="option-select">
+                                    <option value="">자동 선택 (권장)</option>
+                                    <option value="realistic">사실적 (Realistic)</option>
+                                    <option value="artistic">예술적 (Artistic)</option>
+                                    <option value="anime">애니메이션 (Anime)</option>
+                                    <option value="3d">3D 렌더</option>
+                                    <option value="fantasy">판타지</option>
+                                    <option value="cyberpunk">사이버펑크</option>
+                                </select>
+                            </div>
+                            
+                            <div class="option-group">
+                                <label for="qualitySelect">
+                                    <i class="fas fa-star"></i> 품질 수준
+                                </label>
+                                <select id="qualitySelect" class="option-select">
+                                    <option value="ultra">초고품질 (Ultra)</option>
+                                    <option value="high" selected>고품질 (High)</option>
+                                    <option value="balanced">균형 (Balanced)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="option-group">
+                                <label for="detailLevel">
+                                    <i class="fas fa-layer-group"></i> 디테일 수준
+                                </label>
+                                <select id="detailLevel" class="option-select">
+                                    <option value="extreme">극도로 세밀함</option>
+                                    <option value="high" selected>높은 디테일</option>
+                                    <option value="moderate">적당한 디테일</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="generateBtn">
+                        <i class="fas fa-magic"></i> 프롬프트 생성하기
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">
+                        <i class="fas fa-eraser"></i> 초기화
+                    </button>
+                </div>
+            </section>
+
+            <!-- Loading Animation -->
+            <div class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-animation">
+                    <div class="spinner"></div>
+                    <p>AI가 최적의 프롬프트를 설계하고 있습니다...</p>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <section class="output-section" id="outputSection" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-magic"></i> 생성된 프롬프트</h2>
+                    <p class="helper-text">아래 프롬프트를 복사하여 AI 이미지 생성 도구에 사용하세요</p>
+                </div>
+
+                <!-- Korean Prompt -->
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <h3><i class="fas fa-language"></i> 🇰🇷 한국어 프롬프트</h3>
+                        <button class="btn-copy" data-target="koreanPrompt">
+                            <i class="fas fa-copy"></i> 복사
+                        </button>
+                    </div>
+                    <div class="prompt-content">
+                        <pre id="koreanPrompt" class="prompt-text"></pre>
+                    </div>
+                </div>
+
+                <!-- English Prompt -->
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <h3><i class="fas fa-globe"></i> 🇺🇸 English Prompt</h3>
+                        <button class="btn-copy" data-target="englishPrompt">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="prompt-content">
+                        <pre id="englishPrompt" class="prompt-text"></pre>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="explanation-card">
+                    <div class="explanation-header">
+                        <h3><i class="fas fa-info-circle"></i> 💡 프롬프트 설계 해설</h3>
+                    </div>
+                    <div class="explanation-content" id="explanationContent"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="regenerateBtn">
+                        <i class="fas fa-redo"></i> 다시 생성하기
+                    </button>
+                    <button class="btn btn-secondary" id="newPromptBtn">
+                        <i class="fas fa-plus"></i> 새 프롬프트 만들기
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tips Section -->
+            <section class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> 💡 더 나은 이미지를 위한 팁</h3>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <i class="fas fa-palette"></i>
+                        <h4>구체적으로 표현하기</h4>
+                        <p>"예쁜 풍경" 대신 "일몰 시간의 라벤더 밭과 오래된 풍차"처럼 구체적으로 설명하세요.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-brush"></i>
+                        <h4>스타일 언급하기</h4>
+                        <p>원하는 예술 스타일(사실적, 수채화, 3D 등)을 명시하면 더 정확한 결과를 얻을 수 있습니다.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-sun"></i>
+                        <h4>조명과 분위기</h4>
+                        <p>시간대, 날씨, 조명 조건을 추가하면 이미지의 분위기가 크게 향상됩니다.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-camera"></i>
+                        <h4>카메라 앵글</h4>
+                        <p>"클로즈업", "광각", "새의 눈으로 본" 등 시점을 지정하면 구도가 명확해집니다.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <i class="fas fa-heart"></i> 
+                최고의 AI 이미지 생성을 위한 프롬프트 설계 도구
+            </p>
+            <p class="footer-note">
+                Midjourney, DALL-E, Stable Diffusion, Leonardo AI 등 모든 이미지 생성 AI에 사용 가능
+            </p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">복사되었습니다!</span>
+    </div>
+
+    <script>
+// ========== 프롬프트 생성 엔진 ==========
+class ImagePromptArchitect {
+    constructor() {
+        this.styleKeywords = {
+            realistic: {
+                quality: 'photorealistic, ultra-detailed, 8k resolution, professional photography',
+                lighting: 'natural lighting, ray tracing, volumetric lighting',
+                camera: 'DSLR, 85mm lens, sharp focus, depth of field',
+                details: 'highly detailed textures, intricate details, lifelike'
+            },
+            artistic: {
+                quality: 'masterpiece, artistic composition, gallery quality',
+                lighting: 'dramatic lighting, chiaroscuro, artistic shadows',
+                camera: 'carefully composed, rule of thirds, golden ratio',
+                details: 'expressive brushstrokes, rich textures, artistic interpretation'
+            },
+            anime: {
+                quality: 'anime style, manga illustration, cel shading',
+                lighting: 'vibrant colors, anime lighting, dramatic highlights',
+                camera: 'dynamic angle, anime composition',
+                details: 'detailed line art, expressive eyes, clean outlines'
+            },
+            '3d': {
+                quality: '3D render, octane render, unreal engine 5',
+                lighting: 'studio lighting, global illumination, ambient occlusion',
+                camera: 'cinematic camera angle, professional 3D composition',
+                details: 'high polygon count, subsurface scattering, PBR materials'
+            },
+            fantasy: {
+                quality: 'fantasy art, epic composition, magical atmosphere',
+                lighting: 'ethereal lighting, mystical glow, magical ambiance',
+                camera: 'grand perspective, heroic angle, immersive view',
+                details: 'intricate magical details, mythical elements, enchanted aesthetics'
+            },
+            cyberpunk: {
+                quality: 'cyberpunk aesthetic, futuristic, dystopian atmosphere',
+                lighting: 'neon lights, holographic displays, moody lighting',
+                camera: 'urban perspective, gritty composition, tech noir angle',
+                details: 'high-tech details, neon signs, futuristic technology'
+            }
+        };
+
+        this.qualitySettings = {
+            ultra: {
+                resolution: '8K resolution, ultra high definition',
+                detail: 'extremely detailed, hyper-realistic details, intricate complexity',
+                rendering: 'perfect rendering, flawless execution, premium quality'
+            },
+            high: {
+                resolution: '4K resolution, high definition',
+                detail: 'highly detailed, professional quality, crisp details',
+                rendering: 'excellent rendering, high-quality output'
+            },
+            balanced: {
+                resolution: 'high resolution',
+                detail: 'well-detailed, good quality',
+                rendering: 'balanced composition, clear output'
+            }
+        };
+
+        this.detailLevels = {
+            extreme: 'macro details, microscopic precision, every tiny element visible, extreme attention to detail',
+            high: 'intricate details, fine elements, careful attention to small features',
+            moderate: 'clear details, well-defined elements, good clarity'
+        };
+    }
+
+    analyzeInput(userInput, options = {}) {
+        return {
+            mainSubject: userInput.toLowerCase().trim(),
+            suggestedStyle: options.style || this.detectStyle(userInput),
+            atmosphere: this.detectAtmosphere(userInput),
+            timeAndWeather: this.detectTimeAndWeather(userInput),
+            compositionElements: this.detectCompositionElements(userInput),
+            colorPalette: this.detectColorPalette(userInput)
+        };
+    }
+
+    detectStyle(input) {
+        const lower = input.toLowerCase();
+        if (lower.match(/사진|포토|리얼|현실|실제/)) return 'realistic';
+        if (lower.match(/애니|만화|일본/)) return 'anime';
+        if (lower.match(/3d|렌더|모델링/)) return '3d';
+        if (lower.match(/사이버펑크|미래|네온/)) return 'cyberpunk';
+        if (lower.match(/판타지|마법|신화/)) return 'fantasy';
+        if (lower.match(/예술|그림|회화|수채화|유화/)) return 'artistic';
+        return 'realistic';
+    }
+
+    detectAtmosphere(input) {
+        const lower = input.toLowerCase();
+        const atmospheres = [];
+        if (lower.match(/어두운|음울한|우울한/)) atmospheres.push('moody', 'dark');
+        if (lower.match(/밝은|화사한|경쾌한/)) atmospheres.push('bright', 'cheerful');
+        if (lower.match(/극적인|드라마틱/)) atmospheres.push('dramatic');
+        if (lower.match(/평온한|고요한|차분한/)) atmospheres.push('serene', 'peaceful');
+        if (lower.match(/신비로운|몽환적인/)) atmospheres.push('mystical', 'ethereal');
+        if (lower.match(/활기찬|역동적인/)) atmospheres.push('energetic', 'dynamic');
+        return atmospheres.length > 0 ? atmospheres : ['atmospheric'];
+    }
+
+    detectTimeAndWeather(input) {
+        const lower = input.toLowerCase();
+        const conditions = {};
+        if (lower.match(/일출|아침/)) conditions.time = 'sunrise, morning light';
+        else if (lower.match(/일몰|저녁|황혼/)) conditions.time = 'sunset, golden hour';
+        else if (lower.match(/밤|야간/)) conditions.time = 'night, moonlight';
+        else if (lower.match(/정오|한낮/)) conditions.time = 'midday, bright sunlight';
+
+        if (lower.match(/비|우천/)) conditions.weather = 'rainy, wet atmosphere';
+        else if (lower.match(/눈|설/)) conditions.weather = 'snowy, winter atmosphere';
+        else if (lower.match(/안개|미스트/)) conditions.weather = 'foggy, misty';
+        else if (lower.match(/구름|흐린/)) conditions.weather = 'cloudy, overcast';
+        else if (lower.match(/맑은|청명한/)) conditions.weather = 'clear sky, perfect weather';
+        return conditions;
+    }
+
+    detectCompositionElements(input) {
+        const lower = input.toLowerCase();
+        const elements = [];
+        if (lower.match(/클로즈업|근접/)) elements.push('close-up shot');
+        if (lower.match(/광각|와이드/)) elements.push('wide angle');
+        if (lower.match(/조감|새의 눈|위에서/)) elements.push("bird's eye view");
+        if (lower.match(/저각|아래에서/)) elements.push('low angle shot');
+        if (lower.match(/파노라마/)) elements.push('panoramic view');
+        if (lower.match(/중심|중앙/)) elements.push('centered composition');
+        return elements;
+    }
+
+    detectColorPalette(input) {
+        const lower = input.toLowerCase();
+        const colors = [];
+        if (lower.match(/파스텔/)) colors.push('pastel colors');
+        if (lower.match(/비비드|선명한/)) colors.push('vivid colors, high saturation');
+        if (lower.match(/모노크롬|흑백/)) colors.push('monochrome, black and white');
+        if (lower.match(/따뜻한|웜톤/)) colors.push('warm color palette');
+        if (lower.match(/차가운|쿨톤/)) colors.push('cool color palette');
+        if (lower.match(/네온/)) colors.push('neon colors, vibrant neon');
+        return colors;
+    }
+
+    generateKoreanPrompt(userInput, options = {}) {
+        const analysis = this.analyzeInput(userInput, options);
+        const style = options.style || analysis.suggestedStyle;
+        const quality = options.quality || 'high';
+        const detailLevel = options.detailLevel || 'high';
+
+        const styleKeys = this.styleKeywords[style] || this.styleKeywords.realistic;
+        const qualityKeys = this.qualitySettings[quality];
+        const detailKeys = this.detailLevels[detailLevel];
+
+        let prompt = `# 이미지 생성 프롬프트\n\n`;
+        prompt += `**주요 내용:**\n${userInput}\n\n`;
+        prompt += `**스타일:**\n${this.translateToKorean(styleKeys.quality)}\n\n`;
+        prompt += `**조명 설정:**\n${this.translateToKorean(styleKeys.lighting)}`;
+        if (analysis.timeAndWeather.time) prompt += `, ${analysis.timeAndWeather.time}`;
+        prompt += `\n\n**구도 및 카메라:**\n${this.translateToKorean(styleKeys.camera)}`;
+        if (analysis.compositionElements.length > 0) prompt += `, ${analysis.compositionElements.join(', ')}`;
+        prompt += `\n\n**품질 설정:**\n${this.translateToKorean(qualityKeys.resolution)}, ${this.translateToKorean(qualityKeys.detail)}, ${this.translateToKorean(detailKeys)}\n\n`;
+        if (analysis.atmosphere.length > 0) prompt += `**분위기:**\n${analysis.atmosphere.join(', ')}\n\n`;
+        if (analysis.colorPalette.length > 0) prompt += `**색상:**\n${analysis.colorPalette.join(', ')}\n\n`;
+        prompt += `**추가 디테일:**\n${this.translateToKorean(styleKeys.details)}, ${this.translateToKorean(qualityKeys.rendering)}`;
+        if (analysis.timeAndWeather.weather) prompt += `, ${analysis.timeAndWeather.weather}`;
+
+        return prompt;
+    }
+
+    generateEnglishPrompt(userInput, options = {}) {
+        const analysis = this.analyzeInput(userInput, options);
+        const style = options.style || analysis.suggestedStyle;
+        const quality = options.quality || 'high';
+        const detailLevel = options.detailLevel || 'high';
+
+        const styleKeys = this.styleKeywords[style] || this.styleKeywords.realistic;
+        const qualityKeys = this.qualitySettings[quality];
+        const detailKeys = this.detailLevels[detailLevel];
+
+        let prompt = `${this.translateToEnglish(userInput)}, ${styleKeys.quality}, ${qualityKeys.resolution}, ${qualityKeys.detail}, ${styleKeys.lighting}`;
+        if (analysis.timeAndWeather.time) prompt += `, ${analysis.timeAndWeather.time}`;
+        prompt += `, ${styleKeys.camera}`;
+        if (analysis.compositionElements.length > 0) prompt += `, ${analysis.compositionElements.join(', ')}`;
+        prompt += `, ${detailKeys}, ${styleKeys.details}, `;
+        if (analysis.atmosphere.length > 0) prompt += `${analysis.atmosphere.join(', ')}, `;
+        if (analysis.colorPalette.length > 0) prompt += `${analysis.colorPalette.join(', ')}, `;
+        if (analysis.timeAndWeather.weather) prompt += `${analysis.timeAndWeather.weather}, `;
+        prompt += `${qualityKeys.rendering}, masterpiece`;
+
+        return prompt;
+    }
+
+    generateExplanation(userInput, options = {}) {
+        const analysis = this.analyzeInput(userInput, options);
+        const style = options.style || analysis.suggestedStyle;
+        const quality = options.quality || 'high';
+
+        let explanation = `<div class="explanation-section"><h4>🎯 의도 구체화</h4>`;
+        explanation += `<p>사용자의 입력 "<strong>${userInput}</strong>"을 분석하여 다음과 같이 해석했습니다:</p><ul>`;
+        explanation += `<li><strong>감지된 스타일:</strong> ${this.getStyleName(style)}</li>`;
+        explanation += `<li><strong>선택된 품질:</strong> ${this.getQualityName(quality)}</li>`;
+        if (analysis.atmosphere.length > 0) explanation += `<li><strong>분위기:</strong> ${analysis.atmosphere.join(', ')}</li>`;
+        if (analysis.timeAndWeather.time || analysis.timeAndWeather.weather) {
+            explanation += `<li><strong>환경 조건:</strong> ${analysis.timeAndWeather.time || ''} ${analysis.timeAndWeather.weather || ''}</li>`;
+        }
+        explanation += `</ul></div>`;
+
+        explanation += `<div class="explanation-section"><h4>⚙️ 설계 핵심</h4>`;
+        explanation += `<p>최고 품질의 이미지를 생성하기 위해 다음 요소들을 자동으로 적용했습니다:</p><ul>`;
+        explanation += `<li><strong>전문가 수준의 조명 설정:</strong> 이미지의 깊이와 입체감을 극대화</li>`;
+        explanation += `<li><strong>최적의 카메라 구도:</strong> 전문 사진가의 기법을 적용한 구성</li>`;
+        explanation += `<li><strong>고급 품질 키워드:</strong> AI가 최상의 디테일을 렌더링하도록 유도</li>`;
+        explanation += `<li><strong>스타일 특화 요소:</strong> ${this.getStyleName(style)} 스타일의 핵심 특징 강조</li>`;
+        explanation += `</ul></div>`;
+
+        explanation += `<div class="explanation-section"><h4>✨ 기대 결과물</h4>`;
+        explanation += `<p>이 프롬프트를 사용하면 다음과 같은 특징을 가진 이미지를 생성할 수 있습니다:</p><ul>`;
+        explanation += `<li>전문가 수준의 ${this.getStyleName(style)} 이미지</li>`;
+        explanation += `<li>세밀한 디테일과 높은 해상도</li><li>완벽한 조명과 구도</li><li>일관된 품질과 예측 가능한 결과</li></ul>`;
+        explanation += `<p class="tip"><i class="fas fa-lightbulb"></i> <strong>팁:</strong> 만족스럽지 않다면 "다시 생성하기"를 눌러 다른 버전을 시도해보세요!</p></div>`;
+
+        return explanation;
+    }
+
+    translateToKorean(text) {
+        const translations = {
+            'photorealistic': '사진같이 사실적인', 'ultra-detailed': '초정밀 디테일', '8k resolution': '8K 해상도',
+            'professional photography': '전문가 촬영 수준', 'natural lighting': '자연광 조명', 'ray tracing': '레이 트레이싱',
+            'volumetric lighting': '볼륨 조명', 'DSLR': 'DSLR 카메라', '85mm lens': '85mm 렌즈',
+            'sharp focus': '선명한 초점', 'depth of field': '피사계 심도', 'highly detailed textures': '고도로 세밀한 질감',
+            'intricate details': '복잡한 디테일', 'lifelike': '생생한', 'masterpiece': '걸작 수준',
+            'artistic composition': '예술적 구성', 'gallery quality': '갤러리 품질', 'dramatic lighting': '드라마틱한 조명',
+            'excellent rendering': '탁월한 렌더링', 'high-quality output': '고품질 출력', 'perfect rendering': '완벽한 렌더링',
+            'flawless execution': '흠잡을 데 없는 실행', 'premium quality': '프리미엄 품질'
+        };
+        let translated = text;
+        for (const [en, ko] of Object.entries(translations)) {
+            translated = translated.replace(new RegExp(en, 'gi'), ko);
+        }
+        return translated;
+    }
+
+    translateToEnglish(text) {
+        const korToEng = {
+            '사이버펑크': 'cyberpunk', '미래 도시': 'futuristic city', '일몰': 'sunset', '고양이': 'cat',
+            '우주': 'space', '판타지': 'fantasy', '숲': 'forest', '마법사': 'wizard', '산': 'mountain',
+            '풍경': 'landscape', '바다': 'ocean', '하늘': 'sky', '네온': 'neon', '도시': 'city',
+            '자동차': 'car', '건물': 'building', '사람': 'person', '여성': 'woman', '남성': 'man'
+        };
+        let result = text;
+        for (const [ko, en] of Object.entries(korToEng)) {
+            result = result.replace(new RegExp(ko, 'g'), en);
+        }
+        return result;
+    }
+
+    getStyleName(style) {
+        const names = {
+            realistic: '사실적 (Realistic)', artistic: '예술적 (Artistic)', anime: '애니메이션 (Anime)',
+            '3d': '3D 렌더', fantasy: '판타지 (Fantasy)', cyberpunk: '사이버펑크 (Cyberpunk)'
+        };
+        return names[style] || style;
+    }
+
+    getQualityName(quality) {
+        const names = { ultra: '초고품질 (Ultra)', high: '고품질 (High)', balanced: '균형 (Balanced)' };
+        return names[quality] || quality;
+    }
+}
+
+const promptArchitect = new ImagePromptArchitect();
+
+// ========== 메인 애플리케이션 로직 ==========
+const userInput = document.getElementById('userInput');
+const generateBtn = document.getElementById('generateBtn');
+const clearBtn = document.getElementById('clearBtn');
+const regenerateBtn = document.getElementById('regenerateBtn');
+const newPromptBtn = document.getElementById('newPromptBtn');
+const loadingSection = document.getElementById('loadingSection');
+const outputSection = document.getElementById('outputSection');
+const koreanPrompt = document.getElementById('koreanPrompt');
+const englishPrompt = document.getElementById('englishPrompt');
+const explanationContent = document.getElementById('explanationContent');
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
+const optionsToggle = document.getElementById('optionsToggle');
+const optionsPanel = document.getElementById('optionsPanel');
+const styleSelect = document.getElementById('styleSelect');
+const qualitySelect = document.getElementById('qualitySelect');
+const detailLevel = document.getElementById('detailLevel');
+
+let currentInput = '';
+let currentOptions = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+    generateBtn.addEventListener('click', handleGenerate);
+    clearBtn.addEventListener('click', handleClear);
+    regenerateBtn.addEventListener('click', handleRegenerate);
+    newPromptBtn.addEventListener('click', handleNewPrompt);
+    optionsToggle.addEventListener('click', toggleOptions);
+
+    document.querySelectorAll('.btn-copy').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetId = e.currentTarget.getAttribute('data-target');
+            copyToClipboard(targetId);
+        });
+    });
+
+    userInput.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleGenerate();
+    });
+
+    userInput.focus();
+});
+
+async function handleGenerate() {
+    const input = userInput.value.trim();
+    if (!input) {
+        showToast('아이디어를 입력해주세요!', 'error');
+        userInput.focus();
+        return;
+    }
+
+    currentInput = input;
+    currentOptions = { style: styleSelect.value, quality: qualitySelect.value, detailLevel: detailLevel.value };
+    showLoading();
+    await simulateProcessing();
+
+    try {
+        const koreanResult = promptArchitect.generateKoreanPrompt(input, currentOptions);
+        const englishResult = promptArchitect.generateEnglishPrompt(input, currentOptions);
+        const explanation = promptArchitect.generateExplanation(input, currentOptions);
+
+        koreanPrompt.textContent = koreanResult;
+        englishPrompt.textContent = englishResult;
+        explanationContent.innerHTML = explanation;
+
+        hideLoading();
+        showOutput();
+        outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+        console.error('프롬프트 생성 오류:', error);
+        hideLoading();
+        showToast('프롬프트 생성 중 오류가 발생했습니다.', 'error');
+    }
+}
+
+function handleClear() {
+    if (confirm('입력한 내용을 모두 지우시겠습니까?')) {
+        userInput.value = '';
+        styleSelect.value = '';
+        qualitySelect.value = 'high';
+        detailLevel.value = 'high';
+        userInput.focus();
+        showToast('초기화되었습니다.');
+    }
+}
+
+async function handleRegenerate() {
+    if (!currentInput) return;
+    showLoading();
+    hideOutput();
+    await simulateProcessing();
+
+    try {
+        const koreanResult = promptArchitect.generateKoreanPrompt(currentInput, currentOptions);
+        const englishResult = promptArchitect.generateEnglishPrompt(currentInput, currentOptions);
+        const explanation = promptArchitect.generateExplanation(currentInput, currentOptions);
+
+        koreanPrompt.textContent = koreanResult;
+        englishPrompt.textContent = englishResult;
+        explanationContent.innerHTML = explanation;
+
+        hideLoading();
+        showOutput();
+        showToast('프롬프트가 재생성되었습니다!');
+    } catch (error) {
+        console.error('재생성 오류:', error);
+        hideLoading();
+        showToast('재생성 중 오류가 발생했습니다.', 'error');
+    }
+}
+
+function handleNewPrompt() {
+    hideOutput();
+    userInput.value = '';
+    userInput.focus();
+    userInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function toggleOptions() {
+    const isHidden = optionsPanel.style.display === 'none' || !optionsPanel.style.display;
+    if (isHidden) {
+        optionsPanel.style.display = 'block';
+        optionsToggle.classList.add('active');
+    } else {
+        optionsPanel.style.display = 'none';
+        optionsToggle.classList.remove('active');
+    }
+}
+
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.textContent;
+
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('클립보드에 복사되었습니다! 🎉');
+        const btn = document.querySelector(`[data-target="${elementId}"]`);
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 2000);
+    }).catch(err => {
+        console.error('복사 실패:', err);
+        showToast('복사에 실패했습니다.', 'error');
+    });
+}
+
+function showToast(message, type = 'success') {
+    toastMessage.textContent = message;
+    toast.className = 'toast show';
+    if (type === 'error') toast.classList.add('error');
+    setTimeout(() => toast.classList.remove('show', 'error'), 3000);
+}
+
+function showLoading() {
+    loadingSection.style.display = 'block';
+    generateBtn.disabled = true;
+    setTimeout(() => loadingSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+}
+
+function hideLoading() {
+    loadingSection.style.display = 'none';
+    generateBtn.disabled = false;
+}
+
+function showOutput() {
+    outputSection.style.display = 'block';
+}
+
+function hideOutput() {
+    outputSection.style.display = 'none';
+}
+
+function simulateProcessing() {
+    return new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
+}
+    </script>
+</body>
+</html>
